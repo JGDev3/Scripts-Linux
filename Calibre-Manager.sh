@@ -6,9 +6,7 @@
 ##
 ## ToDo:
 ## - Add arguments for the options:
-##    [-u -update | -i -install | -c -custom | -r -remove | -b -backup ]
-##
-## - Add option to extract all documents in pdf or epub format
+## 
 ##
 ################################################################################
 
@@ -25,8 +23,8 @@ yellow_t=$(tput setaf 11)
 black_t=$(tput setaf 16)
 darkyellow_t=$(tput setaf 155)
 
-red_b=(tput setab)
-green_b=(tput setab)
+red_b=$(tput setab 1)
+green_b=$(tput setab 2)
 yellow_b=(tput setab)
 orange_b=(tput setab)
 brown_b=(tput setab)
@@ -47,16 +45,56 @@ err_s="${bold} [${red_t}x${rst}${bold}]${rst} "
 ######## Funciones
 
 pausa(){
-  read -p "[+] Presiona Enter para continuar..." fackEnterKey
+  read -p "${qst_s} Presiona ${bold}${darkyellow_t}ENTER${rst} para continuar..." fackEnterKey
+}
+
+prev_checks(){
+  # Devuelve 0 si es correcto y 1 si hay errores de dependencias y 2 si hay
+  # errores de conexión a Internet
+
+  #chk_deps
+  chk_connection
+}
+
+#chk_deps(){
+#
+#}
+
+chk_connection(){
+  # Comprueba que hay conexión a Internet
+  clear
+
+  url="www.google.es"
+  count=3
+
+  printf "${blue_t}"
+  printf "\n ===================== "
+  printf "\n #   ${rst}${darkyellow_t}${bold}C A L I B R E${rst}${blue_t}   # "
+  printf "\n #   ${rst}${darkyellow_t}${bold}M A N A G E R${rst}${blue_t}   # "
+  printf "\n ===================== "
+  printf "\n ====================================== ${rst}\n"
+
+  printf "${inf_s} ${purple_t}${bold}CHECKS${rst} previos...\n"
+  printf "${inf_s} Probando la conexión..."
+
+  if (ping -c ${count} "${url}" 1> /dev/null); then
+    message="\n${inf_s} Internet Connection ${purple_t}${bold}STATUS${rst}: ${green_b}${black_t} OK ${rst}\n"
+    printf "${message}"
+    pausa
+  else
+    message="\n${err_s} Internet Connection ${purple_t}${bold}STATUS${rst}: ${red_b}${black_t} KO ${rst}\n"
+    printf "${message}"
+    exit
+  fi
 }
 
 show_menu_principal(){
   clear
-  printf "\n${blue_t}"
-  printf "\n\t ===================== "
-  printf "\n\t #   ${rst}${darkyellow_t}${bold}C A L I B R E${rst}${blue_t}   # "
-  printf "\n\t #   ${rst}${darkyellow_t}${bold}M A N A G E R${rst}${blue_t}   # "
-  printf "\n\t ===================== \n"
+  printf "${blue_t}"
+  printf "\n ===================== "
+  printf "\n #   ${rst}${darkyellow_t}${bold}C A L I B R E${rst}${blue_t}   # "
+  printf "\n #   ${rst}${darkyellow_t}${bold}M A N A G E R${rst}${blue_t}   # "
+  printf "\n ===================== "
   printf "\n =============================================================== ${rst}"
   printf "\n ${darkyellow_t}${bold}1)${rst} Actualizar Calibre."
   printf "\n ${darkyellow_t}${bold}2)${rst} Instalar Calibre en directorio por defecto (recomendado)."
@@ -107,4 +145,5 @@ instala_custom_dir(){
 }
 
 ################ INICIO DEL SCRIPT ################
+prev_checks
 show_menu_principal
